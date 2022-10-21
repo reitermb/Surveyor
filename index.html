@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="https://unpkg.com/survey-jquery@1.9.54/defaultV2.css" type="text/css" rel="stylesheet"/>
+    <title>SurveyJS and Google Sheets example</title>
+  </head>
+  <body>
+<!-- Button trigger modal -->
+
+
+  <main role="main" class="container">
+
+	<div>
+
+
+
+  </main><!-- /.container -->
+
+  <!-- Modal -->
+
+		<div class="modal-body">
+			<div id="surveyContainer"></div>
+		</div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+	<script src="https://unpkg.com/survey-jquery@1.9.54/survey.jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+	<script>
+    Survey.StylesManager.applyTheme("defaultV2");
+
+  var surveyJSON = {"title":"Raft Website Survey","description":"Survey about all kinds of cool stuff that'll impact the redesign process","logo":"https://goraft.unanet.biz/goraft/action/image?path=3%2FRaft_logo_dark-0001.png","logoHeight":"50px","logoPosition":"right","pages":[{"name":"page1","elements":[{"type":"boolean","name":"question1","title":"Have you visited the Raft site before today?","isRequired":true},{"type":"radiogroup","name":"question4","visibleIf":"{question1} = true","title":"How familiar are you with the site?","isRequired":true,"choices":[{"value":"item1","text":"Highly familiar, I've browsed all of it"},{"value":"item2","text":"Fairly familiar, I've browsed some of it"},{"value":"item3","text":"Familiar, I've browsed a page or two"},{"value":"item4","text":"Unfamiliar, I've gone there but didn't browse much"}]},{"type":"radiogroup","name":"question2","title":"What is your role at Raft?","isRequired":true,"choices":[{"value":"item1","text":"Developer"},{"value":"item2","text":"Designer"},{"value":"item3","text":"Product Manager"}],"showOtherItem":true},{"type":"boolean","name":"question3","title":"Would you be interested in participating in an individual session to help us learn more about your thoughts and experiences? (The session will be no more than one hour)","isRequired":true},{"type":"text","name":"question5","visibleIf":"{question3} = true","title":"Enter your Raft email:","isRequired":true},{"type":"comment","name":"question6","title":"Tell us about your first impressions of the Raft website","isRequired":true,"autoGrow":true},{"type":"text","name":"question12","title":"What are three words that describe the website?","isRequired":true},{"type":"comment","name":"question7","title":"Why did you decide to join Raft?","isRequired":true,"autoGrow":true},{"type":"text","name":"question13","title":"What are three words that describe Raft as an organization?","isRequired":true},{"type":"multipletext","name":"question8","title":"Say we have to add three things that are currently missing from the site, what should be added?","items":[{"name":"text1","title":"Add:"},{"name":"text2","title":"Add:"},{"name":"text3","title":"Add:"}]},{"type":"multipletext","name":"question9","title":"Say we have to remove three current elements of the site, what should be removed?","items":[{"name":"text1","title":"Remove: "},{"name":"text2","title":"Remove: "},{"name":"text3","title":"Remove: "}]},{"type":"matrix","name":"question11","title":"The current Raft website:","isRequired":true,"columns":[{"value":"Column 1","text":"Strongly Agree"},{"value":"Column 2","text":"Agree"},{"value":"Column 3","text":"Neither agree nor disagree"},{"value":"Column 4","text":"Disagree"},{"value":"Column 5","text":"Strongly Disagree"}],"rows":[{"value":"Row 1","text":"Feels modern or cutting edge"},{"value":"Row 2","text":"Is easy to navigate"},{"value":"Row 3","text":"Clearly communicates Raft's brand"},{"value":"Row 4","text":"Follows web design best practices"},{"value":"Row 5","text":"Represents my role at Raft"},{"value":"Row 6","text":"Contains quality content"},{"value":"Row 7","text":"Makes me feel proud of Raft"}]},{"type":"ranking","name":"question10","title":"Rank the site's current pages from Most to Least Valuable","isRequired":true,"choices":[{"value":"item1","text":"Homepage"},{"value":"item2","text":"About Page"},{"value":"item3","text":"Our Work Page"},{"value":"item4","text":"Services Pages (Cloud Native, Data Science, Dev SecOps, and Product Strategy)"},{"value":"item5","text":"Join Page"},{"value":"item6","text":"Contact Page"},{"value":"item7","text":"Blog"}]}]}],"autoGrowComment":true};
+function sendDataToServer(survey, options) {
+	options.showDataSaving();
+	$.ajax({
+		url: 'https://script.google.com/macros/s/AKfycbzsAfURfBnVLxy_fVl2KUxwEBxvlRM4ZMQ95YVD9tajSeNoQp8lLyPR9ohLduFP9O6m/exec',
+		type: 'post',
+		data: JSON.stringify(survey.data),
+		headers: {
+			"Content-Type": "text/plain"
+		},
+		processData: false,
+		complete: function(res, status) {
+			if (status == 'success') {
+				options.showDataSavingSuccess();
+			}else {
+				options.showDataSavingError();
+			}
+		},
+	});
+}
+
+var survey = new Survey.Model(surveyJSON);
+$("#surveyContainer").Survey({
+    model: survey,
+	onComplete: sendDataToServer
+});
+	</script>
+  </body>
+</html>
